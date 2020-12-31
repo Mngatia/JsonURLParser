@@ -75,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
                 return current;
             }
 
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 
 }
