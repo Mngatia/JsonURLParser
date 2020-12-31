@@ -4,7 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
         //1. Make array list
         friendsList = new ArrayList<>();
         lv = findViewById(R.id.listview);
+
+        GetData getData = new GetData();
+        getData.execute();
     }
 
     public class GetData extends AsyncTask<String, String, String> {
@@ -77,7 +86,40 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                JSONArray jsonArray = jsonObject.getJSONArray("Friends");
+
+                for (int i = 0; i< jsonArray.length() ; i++){
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                    namey = jsonObject1.getString("name");
+                    age = jsonObject1.getString("age");
+
+                    //HashMap
+                    HashMap<String, String> friends = new HashMap<>();
+
+                    friends.put("name", namey);
+                    friends.put("age", age);
+
+                    friendsList.add(friends);
+
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //Displaying the results
+            ListAdapter adapter = new SimpleAdapter(
+                    MainActivity.this,
+                    friendsList,
+                    R.layout.row_layout,
+                    new String[] {"name", "age"},
+                    new int[]{R.id.textView, R.id.textView2});
+
+            lv.setAdapter(adapter);
+
         }
     }
 
